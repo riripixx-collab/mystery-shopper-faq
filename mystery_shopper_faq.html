@@ -1,631 +1,388 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>안경점 미스터리쇼퍼 FAQ</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg: #0d0f14;
-    --surface: #161921;
-    --surface2: #1e2330;
-    --border: #2a3040;
-    --accent: #4f8ef7;
-    --accent2: #7dd3c0;
-    --warn: #f7a84f;
-    --text: #e8eaf0;
-    --text-muted: #7a8099;
-    --user-bg: #1a2540;
-    --bot-bg: #161921;
-    --radius: 14px;
-  }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>안경점 방문조사 FAQ</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Malgun Gothic', sans-serif;
+      background: #f0f2f5;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 16px 0;
+    }
+    #app {
+      width: 100%;
+      max-width: 420px;
+      background: #f0f2f5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .chat-header {
+      background: #1a5fa8;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .chat-avatar {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; color: #fff; font-weight: 600; flex-shrink: 0;
+    }
+    .chat-header-name { font-size: 15px; font-weight: 600; color: #fff; }
+    .chat-header-status { font-size: 11px; color: rgba(255,255,255,0.8); margin-top: 2px; }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+    .banner-wrap {
+      display: flex; flex-direction: column; gap: 6px;
+      padding: 10px 12px 0; background: #f0f2f5;
+    }
+    .alert-banner { border-radius: 10px; overflow: hidden; }
+    .alert-banner.warning { background: #fff3cd; border-left: 4px solid #e67e00; }
+    .alert-banner.info { background: #ddeeff; border-left: 4px solid #1a5fa8; }
+    .alert-banner-inner {
+      display: flex; align-items: flex-start; gap: 8px;
+      padding: 10px 10px 10px 12px;
+    }
+    .alert-icon { font-size: 14px; flex-shrink: 0; margin-top: 2px; }
+    .alert-text { font-size: 12.5px; line-height: 1.65; flex: 1; }
+    .alert-banner.warning .alert-text { color: #7a4500; }
+    .alert-banner.info .alert-text { color: #0c3d7a; }
+    .alert-banner.info a { color: #1a5fa8; font-weight: 600; word-break: break-all; }
+    .alert-close {
+      background: none; border: none; font-size: 14px; cursor: pointer;
+      padding: 0 2px; flex-shrink: 0; line-height: 1; margin-top: 1px;
+    }
+    .alert-banner.warning .alert-close { color: #a06010; }
+    .alert-banner.info .alert-close { color: #1a5fa8; }
 
-  body {
-    background: var(--bg);
-    font-family: 'Noto Sans KR', sans-serif;
-    color: var(--text);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 0;
-  }
+    .chat-messages {
+      flex: 1;
+      padding: 14px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      overflow-y: auto;
+    }
+    .msg-row { display: flex; gap: 8px; align-items: flex-end; }
+    .msg-row.user { flex-direction: row-reverse; }
+    .msg-avatar-sm {
+      width: 30px; height: 30px; border-radius: 50%; background: #1a5fa8;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; color: #fff; font-weight: 600; flex-shrink: 0;
+    }
+    .msg-bubble {
+      max-width: 80%;
+      padding: 11px 14px;
+      border-radius: 18px;
+      font-size: 13.5px;
+      line-height: 1.65;
+    }
+    .msg-bubble.bot {
+      background: #fff;
+      color: #222;
+      border-bottom-left-radius: 4px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+    }
+    .msg-bubble.user {
+      background: #1a5fa8;
+      color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+    .msg-time { font-size: 10px; color: #aaa; margin-top: 4px; padding: 0 4px; }
 
-  /* Header */
-  .header {
-    width: 100%;
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 16px 24px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
+    .quick-section {
+      background: #fff;
+      border-top: 1px solid #e8eaed;
+      padding: 10px 12px 10px;
+    }
+    .divider-label {
+      text-align: center; font-size: 11px; color: #999; margin-bottom: 10px;
+    }
+    .btn-group { margin-bottom: 10px; }
+    .btn-group:last-child { margin-bottom: 0; }
+    .btn-group-label {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.05em;
+      margin-bottom: 5px; padding-left: 2px;
+    }
+    .btn-group-label.orange { color: #c06020; }
+    .btn-group-label.blue { color: #1a5fa8; }
+    .btn-group-row { display: flex; flex-wrap: wrap; gap: 6px; }
+    .quick-btns { display: flex; flex-wrap: wrap; gap: 7px; }
+    .quick-btn {
+      background: #fff;
+      border: 1px solid #1a5fa8; color: #1a5fa8;
+      font-size: 12px; padding: 7px 11px; border-radius: 20px;
+      cursor: pointer; transition: background 0.15s, color 0.15s;
+      line-height: 1.4;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Malgun Gothic', sans-serif;
+      display: inline-flex; align-items: center; gap: 5px;
+    }
+    .quick-btn:hover { background: #e8f0fb; }
+    .quick-btn.active { background: #1a5fa8; color: #fff; }
+    .quick-btn.star {
+      background: #fff4ec;
+      border: 1.5px solid #e05c00;
+      color: #b84400;
+      font-weight: 600;
+    }
+    .quick-btn.star:hover { background: #ffe3cc; }
+    .quick-btn.star.active { background: #e05c00; color: #fff; border-color: #e05c00; }
+    .btn-emoji { font-size: 13px; line-height: 1; }
 
-  .header-icon {
-    width: 38px;
-    height: 38px;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    flex-shrink: 0;
-  }
+    .chat-input-area {
+      padding: 8px 12px 16px;
+      border-top: 1px solid #e8eaed;
+      display: flex; align-items: center; gap: 8px;
+      background: #fff;
+    }
+    .chat-input {
+      flex: 1;
+      border: 1px solid #d0d5dd;
+      border-radius: 22px; padding: 9px 16px; font-size: 13.5px;
+      background: #f7f8fa; color: #222;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Malgun Gothic', sans-serif;
+      outline: none;
+    }
+    .chat-input:focus { border-color: #1a5fa8; background: #fff; }
+    .send-btn {
+      width: 38px; height: 38px; border-radius: 50%; background: #1a5fa8;
+      border: none; color: #fff; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; font-size: 15px;
+    }
+    .send-btn:hover { background: #1550a0; }
 
-  .header-text h1 {
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--text);
-    letter-spacing: -0.3px;
-  }
-
-  .header-text p {
-    font-size: 11px;
-    color: var(--text-muted);
-    margin-top: 1px;
-  }
-
-  .status-dot {
-    width: 7px;
-    height: 7px;
-    background: #4ade80;
-    border-radius: 50%;
-    margin-left: auto;
-    box-shadow: 0 0 6px #4ade80aa;
-    animation: pulse 2s infinite;
-  }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
-  }
-
-  /* Chat container */
-  .chat-wrap {
-    width: 100%;
-    max-width: 680px;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    height: calc(100vh - 65px);
-  }
-
-  .chat-messages {
-    flex: 1;
-    overflow-y: auto;
-    padding: 24px 16px 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    scroll-behavior: smooth;
-  }
-
-  .chat-messages::-webkit-scrollbar { width: 4px; }
-  .chat-messages::-webkit-scrollbar-track { background: transparent; }
-  .chat-messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-
-  /* Messages */
-  .msg {
-    display: flex;
-    gap: 10px;
-    animation: fadeUp 0.25s ease forwards;
-    opacity: 0;
-  }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .msg.user { flex-direction: row-reverse; }
-
-  .avatar {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    margin-top: 2px;
-  }
-
-  .avatar.bot {
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-  }
-
-  .avatar.user {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-  }
-
-  .bubble {
-    max-width: 85%;
-    padding: 13px 16px;
-    border-radius: var(--radius);
-    line-height: 1.65;
-    font-size: 14px;
-  }
-
-  .msg.bot .bubble {
-    background: var(--bot-bg);
-    border: 1px solid var(--border);
-    border-top-left-radius: 4px;
-    color: var(--text);
-  }
-
-  .msg.user .bubble {
-    background: var(--user-bg);
-    border: 1px solid #2a3f6a;
-    border-top-right-radius: 4px;
-    color: var(--text);
-  }
-
-  .bubble strong { color: var(--accent2); font-weight: 600; }
-  .bubble .warn { color: var(--warn); font-weight: 600; }
-  .bubble .tag {
-    display: inline-block;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 1px 6px;
-    font-size: 11px;
-    font-family: 'DM Mono', monospace;
-    color: var(--accent);
-    margin-right: 4px;
-  }
-
-  .bubble ul { padding-left: 18px; margin-top: 6px; }
-  .bubble ul li { margin-bottom: 5px; }
-  .bubble p + p { margin-top: 8px; }
-  .bubble .divider {
-    border: none;
-    border-top: 1px solid var(--border);
-    margin: 10px 0;
-  }
-
-  /* Quick reply chips */
-  .chips-wrap {
-    padding: 8px 16px 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 7px;
-  }
-
-  .chip {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 6px 13px;
-    font-size: 12.5px;
-    color: var(--text-muted);
-    cursor: pointer;
-    transition: all 0.15s;
-    font-family: 'Noto Sans KR', sans-serif;
-    white-space: nowrap;
-  }
-
-  .chip:hover {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: #fff;
-  }
-
-  /* Input area */
-  .input-area {
-    padding: 12px 16px 20px;
-    display: flex;
-    gap: 8px;
-    align-items: flex-end;
-  }
-
-  .input-wrap {
-    flex: 1;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    display: flex;
-    align-items: flex-end;
-    padding: 10px 14px;
-    transition: border-color 0.2s;
-  }
-
-  .input-wrap:focus-within {
-    border-color: var(--accent);
-  }
-
-  #userInput {
-    flex: 1;
-    background: transparent;
-    border: none;
-    outline: none;
-    color: var(--text);
-    font-size: 14px;
-    font-family: 'Noto Sans KR', sans-serif;
-    resize: none;
-    max-height: 100px;
-    min-height: 22px;
-    line-height: 1.5;
-  }
-
-  #userInput::placeholder { color: var(--text-muted); }
-
-  .send-btn {
-    width: 40px;
-    height: 40px;
-    background: linear-gradient(135deg, var(--accent), #3a6fd8);
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    transition: opacity 0.15s, transform 0.1s;
-  }
-
-  .send-btn:hover { opacity: 0.9; transform: scale(1.04); }
-  .send-btn:active { transform: scale(0.96); }
-
-  .send-btn svg { width: 16px; height: 16px; fill: white; }
-
-  /* Typing indicator */
-  .typing-dots {
-    display: flex;
-    gap: 4px;
-    align-items: center;
-    padding: 4px 0;
-  }
-
-  .typing-dots span {
-    width: 6px; height: 6px;
-    background: var(--text-muted);
-    border-radius: 50%;
-    animation: dot 1.2s infinite;
-  }
-
-  .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
-  .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
-
-  @keyframes dot {
-    0%, 100% { opacity: 0.3; transform: scale(0.9); }
-    50% { opacity: 1; transform: scale(1.1); }
-  }
-
-  /* Notice banner */
-  .notice-banner {
-    background: linear-gradient(90deg, #1a2540, #192030);
-    border: 1px solid #2a3f6a;
-    border-radius: 10px;
-    padding: 10px 14px;
-    font-size: 12px;
-    color: var(--text-muted);
-    margin: 0 16px 4px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .notice-banner .icon { font-size: 14px; flex-shrink: 0; }
-
-  @media (max-width: 480px) {
-    .bubble { font-size: 13px; }
-    .chip { font-size: 12px; padding: 5px 11px; }
-  }
-</style>
+    .highlight { color: #1a5fa8; font-weight: 600; }
+    .warn { color: #d04a00; }
+    .eg { color: #666; font-size: 12.5px; font-style: italic; }
+    .msg-bubble.bot a { color: #1a5fa8; word-break: break-all; }
+  </style>
 </head>
 <body>
-
-<div class="header">
-  <div class="header-icon">🔍</div>
-  <div class="header-text">
-    <h1>안경점 미스터리쇼퍼 FAQ</h1>
-    <p>조사 관련 자주 묻는 질문에 답변드립니다</p>
-  </div>
-  <div class="status-dot"></div>
-</div>
-
-<div class="chat-wrap">
-  <div class="chat-messages" id="chatMessages"></div>
-
-  <div class="notice-banner">
-    <span class="icon">🔒</span>
-    조사 관련 문의는 반드시 본 채널을 통해서만 해주세요. 매장 문의 절대 금지.
-  </div>
-
-  <div class="chips-wrap" id="chipsWrap">
-    <button class="chip" onclick="sendChip('주의사항 알려줘')">⚠️ 주의사항</button>
-    <button class="chip" onclick="sendChip('방문 전 확인사항은?')">📋 방문 전 확인</button>
-    <button class="chip" onclick="sendChip('어떤 제품 구매할 수 있어?')">👓 구매 가능 제품</button>
-    <button class="chip" onclick="sendChip('지원금과 사례비가 얼마야?')">💰 지원금·사례비</button>
-    <button class="chip" onclick="sendChip('보수 지급 프로세스 알려줘')">📆 지급 프로세스</button>
-    <button class="chip" onclick="sendChip('신분증 통장 사본 어떻게 해?')">🪪 신분증·통장</button>
-    <button class="chip" onclick="sendChip('월말정산')">🏦 사례비 지급일정</button>
-    <button class="chip" onclick="sendChip('지인도 참여 가능해?')">👥 지인 참여</button>
-    <button class="chip" onclick="sendChip('방문 후 해야 할 일은?')">✅ 방문 후 절차</button>
-    <button class="chip" onclick="sendChip('녹취')">🎙️ 녹취 안내</button>
-    <button class="chip" onclick="sendChip('운영시간 알려줘')">📞 문의 가능 시간</button>
-  </div>
-
-  <div class="input-area">
-    <div class="input-wrap">
-      <textarea id="userInput" placeholder="궁금한 점을 입력하세요..." rows="1"
-        onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+<div id="app">
+  <div class="chat-header">
+    <div class="chat-avatar">Q</div>
+    <div>
+      <div class="chat-header-name">안경점 방문조사 FAQ</div>
+      <div class="chat-header-status">궁금한 항목을 선택해 주세요</div>
     </div>
-    <button class="send-btn" onclick="handleSend()">
-      <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-    </button>
+  </div>
+
+  <div class="banner-wrap">
+    <div class="alert-banner warning" id="banner1">
+      <div class="alert-banner-inner">
+        <span class="alert-icon">⚠️</span>
+        <span class="alert-text"><b>조사 보안 필수 안내</b><br>매장 측은 이번 조사가 진행된다는 사실을 전혀 모르고 있기 때문에 상담이나 검진 중 조사 참여 사실을 매장 관계자 및 직원에게 <b>절대 언급하거나 티를 내서는 안 됩니다.</b></span>
+        <button class="alert-close" onclick="document.getElementById('banner1').style.display='none'">✕</button>
+      </div>
+    </div>
+    <div class="alert-banner info" id="banner2">
+      <div class="alert-banner-inner">
+        <span class="alert-icon">📋</span>
+        <span class="alert-text"><b>방문 전 교육 자료 필수 확인</b><br>매장 방문 전 반드시 교육 자료의 내용을 숙지하고, 퀴즈까지 완료 부탁드립니다.<br><a href="https://canva.link/6h9nzhl7m9ubkdg" target="_blank">→ 교육 자료 바로가기</a></span>
+        <button class="alert-close" onclick="document.getElementById('banner2').style.display='none'">✕</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="chat-messages" id="messages"></div>
+
+  <div class="quick-section">
+    <div class="divider-label">빠른 질문 선택</div>
+    <div class="btn-group">
+      <div class="btn-group-label orange">★ 필수 확인</div>
+      <div class="btn-group-row" id="grpStar"></div>
+    </div>
+    <div class="btn-group">
+      <div class="btn-group-label blue">조사 안내</div>
+      <div class="btn-group-row" id="grpInfo"></div>
+    </div>
+    <div class="btn-group">
+      <div class="btn-group-label blue">링크 바로가기</div>
+      <div class="btn-group-row" id="grpLink"></div>
+    </div>
+    <div class="btn-group">
+      <div class="btn-group-label blue">비용 &amp; 기타</div>
+      <div class="btn-group-row" id="grpEtc"></div>
+    </div>
+  </div>
+
+  <div class="chat-input-area">
+    <input class="chat-input" id="chatInput" placeholder="메시지를 입력하세요..." />
+    <button class="send-btn" id="sendBtn">&#9658;</button>
   </div>
 </div>
 
 <script>
-const FAQ = {
-  contact: {
-    keywords: ['운영시간', '응대시간', '문의시간', '연락시간', '평일', '주말', '월요일', '오전9시', '오후6시', '언제연락', '언제문의', '응대가능'],
-    answer: () => `<strong>📞 추가 문의 안내</strong>
-<hr class="divider">
-추가 문의사항이 있으신 경우 아래 연락처로 연락 부탁드립니다.<br><br>
-☎️ <strong>010-9588-8953</strong>
-<hr class="divider">
-<ul>
-<li>🗓️ 응대 가능 시간: <strong>평일 월~금, 오전 9시 ~ 오후 6시</strong></li>
-<li>그 외 시간에 연락 주실 경우 <strong>응대가 늦어질 수 있습니다</strong></li>
-<li>📅 <strong>주말 문의</strong>는 <strong>월요일</strong>에 확인하여 순차 응대드립니다</li>
-</ul>
-<hr class="divider">
-<span class="warn">⚠️</span> 전국 단위 조사로 문의량이 많은 경우 응대가 지연될 수 있는 점 미리 양해 부탁드립니다.`
+const faqs = [
+  {
+    label: "보안 주의사항", emoji: "🔒", star: true,
+    q: "보안 주의사항을 알려주세요",
+    a: `<b class="highlight">★ [필수] 보안 주의사항</b><br><br>본 조사는 일반 고객과 <b>100% 동일한 환경</b>에서 이루어져야 합니다.<br><br>매장 측은 조사 진행 사실을 전혀 모르고 있으므로 절대 언급하거나 티를 내서는 안 됩니다.<br><br><b class="warn">❌ 금지 사항</b><br>・ "조사하러 왔는데 어떻게 해요?" 등 조사 언급 금지<br>・ "사례비는 어떻게 받아요?" 조사 관련 문의 금지<br>・ 받은 교육 언급하며 지적 금지<br><br><span class="warn">⚠ 발각 시 참여 무효 처리될 수 있으니 각별히 유의해 주세요.</span>`
   },
-  caution: {
-    keywords: ['주의', '주의사항', '필독', '비밀', '노출', '들키', '말하면', '문의하면', '안경사에게'],
-    answer: () => `<strong>⚠️ [필독] 핵심 주의사항</strong>
-<hr class="divider">
-본 조사는 <strong>미스터리 쇼핑</strong>으로, 매장 측이 조사 진행 사실을 절대 알아서는 안 됩니다.
-
-<ul>
-<li>❌ "조사하러 왔는데 어떻게 해요?" 같은 말 <span class="warn">절대 금지</span></li>
-<li>❌ 안경사에게 비용 처리 방법 문의 <span class="warn">절대 금지</span></li>
-<li>✅ 실제 안경을 구매하는 일반 고객처럼 자연스럽게 행동</li>
-<li>✅ 조사 관련 모든 문의는 <strong>반드시 저희를 통해서만</strong> 소통</li>
-</ul>
-
-발각될 경우 조사 무효 처리될 수 있으니 각별히 유의해 주세요.`
+  {
+    label: "방문지점 확인", emoji: "📍", star: true,
+    q: "방문 지점은 어떻게 확인하나요?",
+    a: `<b class="highlight">★ [필수] 방문지점 확인</b><br><br>본 조사는 매장 지점에 따라 방문 인원이 <b>사전에 배정</b>되어 있습니다.<br><br>방문 전, 문자로 안내받은 매장이 맞는지 <b>매장 이름과 주소를 반드시 확인</b>하고 조사를 진행해 주시기 바랍니다.<br><br><span class="warn">※ 배정된 매장과 영수증 매장이 불일치할 경우 사례비 지급이 불가할 수 있습니다.</span>`
   },
-  preVisit: {
-    keywords: ['방문전', '확인사항', '사전', '준비', '교육', '중요도설문'],
-    answer: () => `<strong>📋 방문 전 필수 확인사항</strong>
-<hr class="divider">
-<ul>
-<li>📖 <strong>교육 내용 숙지</strong> — 발송된 교육 자료를 반드시 미리 읽어두세요</li>
-<li>📝 <strong>중요도 설문 완료</strong> — 방문 전 반드시 완료해야 합니다</li>
-
-</ul>
-
-두 가지 모두 완료된 후 매장을 방문해 주세요.`
+  {
+    label: "방문 전&후 진행사항", emoji: "✅", star: true,
+    q: "방문 전후에 해야 할 일이 무엇인가요?",
+    a: `<b class="highlight">★ [필수] 방문 전·중·후 진행사항</b><br><br>
+<b>📌 방문 전 필수 진행 사항</b><br>
+교육 내용 숙지 후 사전 중요도 설문까지 완료해 주세요.<br>
+<a href="https://canva.link/cc35abl2h5n3ce6" target="_blank">→ 교육 영상 + 사전 중요도 설문 바로가기</a><br><br>
+<b>📌 방문 중 필수 진행 사항</b><br>
+시력에 관계없이 반드시 <b>시력검사를 담당 안경사에게 요청</b>하셔서 꼭 받으셔야 합니다.<br><br>
+안경사가 시력검사가 굳이 필요 없다고 말해도<br><b>"꼭 시력 검사는 받고 싶다"</b>라고 말씀하신 후 진행해 주세요.<br><br>
+<span class="eg">예: "기존 안경의 도수가 맞지 않는 것 같아서 다시 시력검사를 받아보고 싶습니다"<br>
+예: "요즘 눈이 잘 안 보이는 것 같아 시력검사는 꼭 받아보고 싶어요"</span><br><br>
+<b>📌 방문 직후 필수 진행 사항</b><br>
+① 녹음 종료 후 저장 확인<br>
+&nbsp;&nbsp;&nbsp;→ <a href="mailto:debrief2021@gmail.com">debrief2021@gmail.com</a> 으로 전송<br>
+② 방문 직후 모바일 설문 진행<br>
+&nbsp;&nbsp;&nbsp;<a href="https://ko.surveymonkey.com/r/checklist2" target="_blank">→ 체크리스트 설문 바로가기</a><br>
+③ 영수증 · 신분증 · 통장사본 사진 찍어서 업로드<br>
+&nbsp;&nbsp;&nbsp;<a href="https://ko.surveymonkey.com/r/reward2" target="_blank">→ 서류 제출 링크 바로가기</a>`
   },
-  product: {
-    keywords: ['구매', '제품', '안경테', '안경알', '렌즈', '콘택트', '선글라스', '고글', '수경', '색', '색상', '알만'],
-    answer: () => `<strong>👓 구매 가능 제품 안내</strong>
-<hr class="divider">
-<strong>✅ 구매 가능</strong>
-<ul>
-<li><strong>안경테 + 안경알</strong> 세트 구매 (기본)</li>
-<li>안경테에 <strong>색이 들어간 안경알</strong> 선택 가능</li>
-<li>매대 안경테를 모두 살펴본 후 "마음에 드는 게 없다"고 말씀하신 뒤, <strong>기존 안경테에 안경알만 교체</strong> 가능</li>
-</ul>
-
-<strong>❌ 구매 불가</strong>
-<ul>
-<li>콘택트렌즈, 고글, 수경, 선글라스</li>
-</ul>
-
-<span class="warn">⚠️ 주의</span> 처음부터 "안경알만 하겠다"고 하시면 안 됩니다. 반드시 안경테를 다 둘러보신 후에 말씀해 주세요.`
+  {
+    label: "구매 가능 제품", emoji: "👓", star: false,
+    q: "어떤 제품을 구매할 수 있나요?",
+    a: `<b class="highlight">구매 가능 / 불가 제품 안내</b><br><br><b>✅ 구매 가능</b><br>・ 안경테 + 안경알 세트 (기본)<br>・ 렌즈 색 추가, 블루라이트, 다초점 렌즈 등 기능 추가 모두 가능<br><br><b class="warn">❌ 구매 불가</b><br>・ 선글라스, 콘택트/드림렌즈, 고글, 수경 등 안경 외 상품군<br><br><b>※ 안경알만 바꾸고 싶은 경우</b><br>안경테를 고르는 경험 완료 후 "마음에 드는 게 없다"며 기존 안경테에 알만 교체 요청하세요.<br><span class="warn">처음부터 "안경알만 하겠다"고 하시면 안 됩니다.</span>`
   },
-  postVisit: {
-    keywords: ['방문 후', '끝나고', '완료 후', '조사 후', '체크리스트', '설문 작성'],
-    answer: () => `<strong>✅ 방문 후 즉시 해야 할 일</strong>
-<hr class="divider">
-<ul>
-<li>🎙️ <strong>녹취</strong> 정상 저장 여부 확인</li>
-<li>📸 <strong>매장 사진 / 영수증 사진</strong> 준비 여부 확인</li>
-<li>📱 <strong>모바일로 발송된 체크리스트 설문</strong> 즉시 작성</li>
-</ul>
-
-세 가지 모두 완료하셔야 보수 지급 절차가 진행됩니다.`
+  {
+    label: "녹취 관련 문의", emoji: "🎙️", star: false,
+    q: "녹취 관련해서 궁금한 점이 있어요",
+    a: `<b class="highlight">녹취 관련 FAQ</b><br><br><b>Q1. 녹취는 꼭 해야 하나요?</b><br>네, 필수입니다. 연구원 분석 시 확인이 필요한 내용과 참여자가 기억나지 않는 내용 확인 용도입니다.<br><br><b>Q2. 몰래 녹취하는 것이 불법인가요?</b><br>통신비밀보호법상 내가 대화 주체 중 한 명이면 불법이 아닙니다. (연구 목적으로만 사용, 이후 전량 폐기)<br><br><b>Q3. 녹취가 중간에 끊겼어요</b><br>녹취된 곳까지 전달해 주시고, 설문에 최대한 명확하고 자세하게 응답해 주세요.<br><br><b>Q4. 녹취 파일은 어디로 보내나요?</b><br><a href="mailto:debrief2021@gmail.com">debrief2021@gmail.com</a> 으로 전송 (용량이 클 경우 대용량 메일로 보내 주세요)`
   },
-  payment: {
-    keywords: ['지원금', '사례비', '얼마', '비용', '보상', '추천비', '지역'],
-    answer: () => `<strong>💰 구매 지원금 및 사례비 안내</strong>
-<hr class="divider">
-<strong>1. 제품 구매 지원금</strong>
-<ul>
-<li>영수증 금액 기준 <strong>최대 10만원</strong></li>
-<li>10만원 이상 구매 → <strong>10만원</strong> 지급</li>
-<li>10만원 미만 구매 → <strong>영수증 금액 그대로</strong> 지급</li>
-</ul>
-<strong>2. 조사 사례비</strong>
-<ul>
-<li><span class="tag">서울</span> <strong>2만원</strong></li>
-<li><span class="tag">서울 외</span> <strong>3만원</strong></li>
-</ul>`
+  {
+    label: "설문 주의사항", emoji: "📝", star: false,
+    q: "설문 작성 시 주의사항이 뭔가요?",
+    a: `<b class="highlight">설문 관련 주의사항</b><br><br>① 매장에서 나오자마자 구매 과정을 떠올리며 <b>모바일 설문 즉시 진행</b><br>(기억이 안 날 경우 녹음 파일 다시 듣기 → 확인 불가 시 "확인 불가" 응답)<br><br>② 설문 의견란에는 확인 불가 이유, 특이점, 평가가 애매했던 이유, 불편점·만족점 등을 기입<br><br><span class="warn">※ 영수증/녹음 파일 제출 + 중요도·체크리스트 설문 모두 완료해야 최종 사례비 지급됩니다.</span><br><br>녹음 파일 → <a href="mailto:debrief2021@gmail.com">debrief2021@gmail.com</a>`
   },
-  process: {
-    keywords: ['지급프로세스', '보수절차', '입금절차', '지급절차', '세금유형', '소득신고'],
-    answer: () => `<strong>📆 보수 지급 프로세스</strong>
-<hr class="divider">
-<ol style="padding-left:18px">
-<li>모든 설문·체크리스트 완료 확인</li>
-<li>녹취·사진 이미지 검수 완료</li>
-<li>통장 사본 및 신분증 사본 수집 링크 별도 발송</li>
-<li>세금 유형 선택
-  <ul>
-    <li>기타 소득 <strong>22%</strong></li>
-    <li>사업 소득 <strong>3.3%</strong></li>
-  </ul>
-</li>
-<li>세금 신고 후 잔여 금액 입금</li>
-</ol>
-<hr class="divider">
-🔒 제출된 개인정보는 개인정보보호법에 의거, 조사 완료 및 비용 지급 후 전량 폐기됩니다.`
+  {
+    label: "지원금 & 사례비", emoji: "💰", star: false,
+    q: "지원금과 사례비는 얼마인가요?",
+    a: `<b class="highlight">지원금 & 사례비 안내</b><br><br><b>1. 안경 구매 지원금</b><br>영수증 금액 기준 최대 <b>10만원</b><br>・ 10만원 이상 구매 → 10만원 지급<br>・ 10만원 미만 구매 → 영수증 금액 그대로 지급<br><br><b>2. 조사 사례비</b><br>・ 서울: 2만원<br>・ 서울 외: 3만원<br><br><span class="warn">* 사례비는 세금 제외 후 입금됩니다.</span>`
   },
-  idBank: {
-    keywords: ['신분증', '통장', '주민번호', '사본', '개인정보', '가족', '세금신고'],
-    answer: () => `<strong>🪪 신분증 / 통장 사본 안내</strong>
-<hr class="divider">
-<ul>
-<li>신분증 사본은 <strong>주민번호 전체가 보이도록</strong> 제출해 주세요 (세금 신고용)</li>
-<li>세금 신고가 불가한 경우, <strong>가족 등 신고 가능한 분의 정보</strong>로 입력 가능
-  <ul>
-    <li>단, 성함 및 정보란에는 <strong>참여자 본인 정보</strong>를 반드시 기입해 주세요</li>
-  </ul>
-</li>
-</ul>
-<hr class="divider">
-🔒 제출된 개인정보는 개인정보보호법에 의거, 조사 완료 및 비용 지급 후 전량 폐기됩니다.`
+  {
+    label: "비용 지급 Q&A", emoji: "🏦", star: false,
+    q: "비용 지급 관련 자주 묻는 질문이 있어요",
+    a: `<b class="highlight">비용 지급 자주 묻는 질문</b><br><br><b>Q1. 사례비는 어떻게 지급되나요?</b><br>① 설문(중요도/체크리스트) 완료 + 녹취록 제출 확인<br>② 안경구매 영수증·신분증·통장사본 업로드<br>→ <a href="https://ko.surveymonkey.com/r/reward2" target="_blank">제출 링크 바로가기 →</a><br>③ 1·2 확인 후 제품지원금 1차 입금 → 사례비/추천비 2차 입금<br><br><b>Q2. 언제 입금되나요?</b><br>신분증·통장 사본 확인 후 <b>2주 이내</b> 입금 (입금자명: 디브리프 주식회사)<br>조사 후 한 달이 지나도 미입금 시 연락 주세요.<br><br><b>Q3. 주민번호 전체 공개가 필요한가요?</b><br>네, 세금 신고를 위해 주민번호 전체가 필요합니다. (개인정보보호법에 의거 조사 완료 후 전량 폐기)<br><br><b>Q4. 세금신고를 하면 안 되는 경우엔 어떻게 하나요?</b><br>가족 등 신고 가능한 분의 정보로 제출해 주세요. 단, 성함/전화번호란에는 본인 정보를 기입하세요.`
   },
-  timing: {
-    keywords: ['입금시점', '입금일', '월말', '정산', '지급일', '기다려', '사례비지급', '지급일정', '사례비입금'],
-    answer: () => `<strong>🏦 사례비 지급 일정 안내</strong>
-<hr class="divider">
-<ul>
-<li>📦 조사 비용은 <strong>제품 구매 지원금 먼저 입금</strong> 후, 사례비 및 추천비 등을 추후 정산해 드립니다</li>
-<li>📅 비용 처리는 보통 <strong>월말 (30일~31일)</strong>에 진행됩니다</li>
-<li>🗺️ 전국 조사로 <strong>순차적으로 지급</strong>되고 있으니 조금 늦어져도 양해 부탁드립니다</li>
-<li><span class="warn">⚠️</span> 조사 후 <strong>한 달 내 입금이 안 될 시</strong> 따로 연락 부탁드립니다</li>
-</ul>`
+  {
+    label: "지인/가족 추천 & 추가진행", emoji: "👥", star: false,
+    q: "지인 추천이나 추가 진행은 어떻게 하나요?",
+    a: `<b class="highlight">지인/가족 추천 및 추가 진행 신청</b><br><br><b>1. 지인 추천</b><br>성함/연락처를 문자(010-9588-8953)로 전달해 주시면 신청링크를 별도 안내드립니다.<br><span class="warn">* 신청 시 추천인 항목에 추천인 정보를 작성해야 추천 사례비가 지급됩니다.</span><br><br><b>2. 타지점 추가 진행</b><br>추가 진행 의사를 먼저 저희에게 알려주세요. 가능 지점 확정 안내를 드립니다.<br><br><span class="warn">⚠ 반드시 저희에게 먼저 연락 후 방문 매장 컨펌 필수!</span><br>최종 컨펌 없이 마음대로 방문하실 경우 무효 처리되어 사례금이 지급되지 않습니다.`
   },
-  recording: {
-    keywords: ['녹취', '녹음', '불법', '통신비밀', '꼭해야', '녹취해야'],
-    answer: () => `<strong>🎙️ 녹취, 꼭 해야 하나요?</strong>
-<hr class="divider">
-네, 녹취는 반드시 필요합니다. 녹취가 필요한 이유는 다음과 같습니다.
-<ul>
-<li>📋 연구원들이 설문 항목 확인 후 <strong>궁금하거나 보충이 필요한 내용</strong>을 확인하는 연구 목적</li>
-<li>💡 설문 응답 시 <strong>기억나지 않는 내용을 확인</strong>하기 위한 용도</li>
-</ul>
-<hr class="divider">
-<strong>✅ 불법이 아닌가요?</strong><br><br>
-통신비밀보호법상 내가 대화 주체 중 한 명이라면 '타인 간의 대화'가 아니므로 <strong>불법이 아닙니다.</strong>
-<hr class="divider">
-🔒 보내주신 녹취는 <strong>연구 목적으로만 사용</strong>되며, 이후 <strong>전량 폐기</strong>됩니다.`
+  {
+    label: "응대 시간 & 문의", emoji: "📞", star: false,
+    q: "운영 시간과 문의 방법을 알려주세요",
+    a: `<b class="highlight">응대 가능 시간 & 기타 문의</b><br><br><b>운영 시간:</b> 평일 월~금, 오전 9시 ~ 오후 6시<br><b>문의 전화/문자:</b> 010-9588-8953<br><br>챗봇 확인 후 추가 문의사항이 있으신 경우 위 번호로 문의해 주세요.<br><br><span class="warn">⚠ 전국 단위 조사로 문의량이 많아 응대가 지연될 수 있는 점 양해 부탁드립니다.</span><br><br>문의 시 아래 내용을 함께 전달해 주세요:<br>・ 참여자 성함<br>・ 배정된 안경 지점명<br>・ 문의 내용`
   },
-  referral: {
-    keywords: ['친구', '지인', '가족', '같이', '참여', '소개'],
-    answer: () => `<strong>👥 지인 / 가족 참여 안내</strong>
-<hr class="divider">
-친구, 지인, 가족분의 추가 참여가 가능합니다! 단, 아래 절차를 반드시 지켜주세요.
-
-<ul>
-<li>📞 <strong>사전에 저희에게 먼저 연락</strong>하여 추가 방문 가능 매장 확인</li>
-<li>☎️ 문의: <strong>010-9588-8953</strong></li>
-<li><span class="warn">⚠️ 저희와 협의 없이 방문 시 무효 처리됩니다</span></li>
-</ul>
-
-최종 매장 컨펌을 받으신 후 방문해 주세요.`
+  {
+    label: "[방문전] 교육", emoji: "📖", star: false,
+    q: "교육 자료는 어디서 볼 수 있나요?",
+    a: `<b class="highlight">[방문 전] 교육 자료 확인</b><br><br>매장 방문 전 반드시 하기의 링크에 접속하여 교육 자료의 내용을 숙지하고, <b>퀴즈 및 중요도 설문까지 완료</b> 부탁드립니다.<br><br><a href="https://canva.link/6h9nzhl7m9ubkdg" target="_blank">→ 교육 자료 바로가기</a>`
+  },
+  {
+    label: "[방문직후] 설문", emoji: "🗒️", star: false,
+    q: "체크리스트 설문 링크를 알려주세요",
+    a: `<b class="highlight">[방문 직후] 체크리스트 설문</b><br><br>매장 방문 직후 반드시 아래 링크에 접속하여 체크리스트 설문을 완료해 주세요.<br><br><a href="https://ko.surveymonkey.com/r/checklist2" target="_blank">체크리스트 설문 바로가기 →</a>`
+  },
+  {
+    label: "영수증/신분증/통장사본 제출", emoji: "🧾", star: false,
+    q: "영수증/신분증/통장사본은 어떻게 제출하나요?",
+    a: `<b class="highlight">영수증 · 신분증 · 통장사본 제출</b><br><br>모든 설문 및 녹취까지 완료 후, 아래 서류 이미지를 링크에 접속하여 업로드해 주세요.<br><br>・ 안경 구매 <b>영수증</b> 이미지<br>・ <b>신분증</b> 사본 이미지<br>・ <b>통장 사본</b> 이미지<br><br><a href="https://ko.surveymonkey.com/r/reward2" target="_blank">→ 서류 제출 링크 바로가기</a><br><br><span class="warn">※ 서류 제출 완료 후 따로 연락하지 않으셔도 됩니다. 내부 확인 후 사례비 지급 문자를 발송합니다.</span>`
   }
+];
+
+const messagesEl = document.getElementById('messages');
+const chatInput = document.getElementById('chatInput');
+const sendBtn = document.getElementById('sendBtn');
+
+const groups = {
+  star: { el: document.getElementById('grpStar'), idxs: [] },
+  info: { el: document.getElementById('grpInfo'), idxs: [] },
+  etc:  { el: document.getElementById('grpEtc'),  idxs: [] },
+  link: { el: document.getElementById('grpLink'), idxs: [] }
 };
 
-function matchFAQ(text) {
-  const t = text.toLowerCase().replace(/\s/g, '');
-  for (const [, faq] of Object.entries(FAQ)) {
-    if (faq.keywords.some(k => t.includes(k.replace(/\s/g, '')))) {
-      return faq.answer();
-    }
+const groupMap = [
+  'star','star','star',
+  'info','info','info',
+  'etc','etc','etc','etc',
+  'link','link','link'
+];
+
+function getTime() {
+  const now = new Date();
+  return now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+}
+
+function addMsg(html, type) {
+  const row = document.createElement('div');
+  row.className = 'msg-row ' + (type === 'user' ? 'user' : 'bot');
+  if (type === 'bot') {
+    row.innerHTML = '<div class="msg-avatar-sm">Q</div><div><div class="msg-bubble bot">' + html + '</div><div class="msg-time">' + getTime() + '</div></div>';
+  } else {
+    row.innerHTML = '<div><div class="msg-bubble user">' + html + '</div><div class="msg-time" style="text-align:right">' + getTime() + '</div></div>';
   }
-  return null;
+  messagesEl.appendChild(row);
+  messagesEl.scrollTop = messagesEl.scrollHeight;
 }
 
-function defaultReply(text) {
-  return `말씀하신 내용에 해당하는 FAQ를 찾지 못했습니다.<br><br>
-아래 빠른 질문 버튼을 이용하시거나, 더 구체적으로 질문해 주시면 도움드릴 수 있습니다.<br><br>
-긴급 문의는 <strong>010-9588-8953</strong>으로 연락해 주세요. (평일 09:00~18:00)`;
-}
-
-let typingEl = null;
-
-function appendMsg(html, role) {
-  const msgs = document.getElementById('chatMessages');
-  const div = document.createElement('div');
-  div.className = `msg ${role}`;
-  const avatar = role === 'bot' ? '🔍' : '👤';
-  div.innerHTML = `
-    <div class="avatar ${role}">${avatar}</div>
-    <div class="bubble">${html}</div>
-  `;
-  msgs.appendChild(div);
-  msgs.scrollTop = msgs.scrollHeight;
-  return div;
-}
-
-function showTyping() {
-  const msgs = document.getElementById('chatMessages');
-  const div = document.createElement('div');
-  div.className = 'msg bot';
-  div.id = 'typingMsg';
-  div.innerHTML = `
-    <div class="avatar bot">🔍</div>
-    <div class="bubble"><div class="typing-dots"><span></span><span></span><span></span></div></div>
-  `;
-  msgs.appendChild(div);
-  msgs.scrollTop = msgs.scrollHeight;
-}
-
-function removeTyping() {
-  const el = document.getElementById('typingMsg');
-  if (el) el.remove();
+function renderQuickBtns() {
+  Object.values(groups).forEach(function(g) { g.el.innerHTML = ''; g.idxs = []; });
+  faqs.forEach(function(faq, i) {
+    const grpKey = groupMap[i] || 'etc';
+    const g = groups[grpKey];
+    g.idxs.push(i);
+    const btn = document.createElement('button');
+    btn.className = 'quick-btn' + (faq.star ? ' star' : '');
+    btn.dataset.idx = i;
+    btn.innerHTML = '<span class="btn-emoji">' + faq.emoji + '</span>' + faq.label;
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.quick-btn').forEach(function(b) {
+        b.classList.toggle('active', parseInt(b.dataset.idx) === i);
+      });
+      addMsg(faq.q, 'user');
+      setTimeout(function() { addMsg(faq.a, 'bot'); }, 300);
+    });
+    g.el.appendChild(btn);
+  });
 }
 
 function handleSend() {
-  const input = document.getElementById('userInput');
-  const text = input.value.trim();
-  if (!text) return;
-  input.value = '';
-  input.style.height = 'auto';
-  processMessage(text);
+  const val = chatInput.value.trim();
+  if (!val) return;
+  addMsg(val, 'user');
+  chatInput.value = '';
+  const matched = faqs.find(function(f) { return f.label.includes(val) || f.q.includes(val); });
+  setTimeout(function() {
+    addMsg(matched
+      ? matched.a
+      : '죄송합니다, 해당 내용을 찾지 못했습니다.<br>아래 빠른 질문 버튼을 눌러 주시거나, <b>010-9588-8953</b>으로 문의해 주세요. (평일 09:00~18:00)',
+      'bot'
+    );
+  }, 350);
 }
 
-function sendChip(text) {
-  processMessage(text);
-}
+sendBtn.addEventListener('click', handleSend);
+chatInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') handleSend(); });
 
-function processMessage(text) {
-  appendMsg(text, 'user');
-  showTyping();
-  setTimeout(() => {
-    removeTyping();
-    const matched = matchFAQ(text);
-    appendMsg(matched || defaultReply(text), 'bot');
-  }, 650);
-}
-
-function handleKey(e) {
-  if (e.key === 'Enter' && !e.shiftKey) {
-    e.preventDefault();
-    handleSend();
-  }
-}
-
-function autoResize(el) {
-  el.style.height = 'auto';
-  el.style.height = Math.min(el.scrollHeight, 100) + 'px';
-}
-
-// Welcome message
-window.onload = () => {
-  setTimeout(() => {
-    appendMsg(`안녕하세요! 👋 <strong>안경점 미스터리쇼퍼 FAQ 챗봇</strong>입니다.<br><br>
-조사 관련 궁금한 점을 질문하시거나, 아래 빠른 질문 버튼을 눌러주세요.<br><br>
-<span class="warn">⚠️ 조사 관련 모든 문의는 반드시 저희를 통해서만 해주세요. 매장 문의 절대 금지!</span>`, 'bot');
-  }, 300);
-};
+addMsg('안녕하세요! <b>안경점 방문조사 FAQ 챗봇</b>입니다.<br>아래 버튼을 눌러 궁금한 내용을 빠르게 확인하세요.', 'bot');
+renderQuickBtns();
 </script>
 </body>
 </html>
